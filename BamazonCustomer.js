@@ -26,38 +26,41 @@ conn.query('SELECT itemID, productName, price, stockQuantity FROM products', fun
 })
 
 var prompts = 
-[{
-	type: 'input',
-	message: 'Please enter the id of the product you would like to purchase',
-	name: 'id',
-	filter: function(id) {
-		return parseInt(id)
-	},
-	validate: function(id) {
-		for (var i in listofProducts) {
-			if (listofProducts[i].itemID == parseInt(id)) {
-				selectedProduct = id
-				return true
+[
+	{
+		type: 'input',
+		message: 'Please enter the id of the product you would like to purchase',
+		name: 'id',
+		filter: function(id) {
+			return parseInt(id)
+		},
+		validate: function(id) {
+			for (var i in listofProducts) {
+				if (listofProducts[i].itemID == parseInt(id)) {
+					selectedProduct = id
+					return true
+				}
 			}
+			return 'That product id is not available'
 		}
-		return 'That product id is not available'
-	}
-}, {
-	type: 'input',
-	message: 'How many units of this product would you like to purchase?',
-	name: 'quantity',
-	filter: function(unit) {
-		return parseInt(unit)
 	},
-	validate: function(unit) {
-		for (var i in listofProducts) {
-			if (listofProducts[i].itemID == selectedProduct && listofProducts[i].stockQuantity >= parseInt(unit)) {
-				return true
+	{
+		type: 'input',
+		message: 'How many units of this product would you like to purchase?',
+		name: 'quantity',
+		filter: function(unit) {
+			return parseInt(unit)
+			},
+		validate: function(unit) {
+			for (var i in listofProducts) {
+				if (listofProducts[i].itemID == selectedProduct && listofProducts[i].stockQuantity >= parseInt(unit)) {
+					return true
+				}
 			}
+			return 'That amount is not currently availabe'
 		}
-		return 'That amount is not currently availabe'
 	}
-}]
+]
 
 
 function displayItems(res) {
@@ -82,7 +85,7 @@ function placeOrder(input) {
 	conn.query('UPDATE products SET stockQuantity = stockQuantity - ' + conn.escape(input.quantity) + ' WHERE itemID = ' + conn.escape(input.id), function(err,res) {
 		if (err) throw err;
 
-		console.log('Update has completed:', input.id, input.quantity)
+		// console.log('Update has completed:', input.id, input.quantity)
 		for (var i in listofProducts) {
 			if (listofProducts[i].itemID == input.id)
 				var price = listofProducts[i].price
