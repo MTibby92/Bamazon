@@ -16,39 +16,23 @@ var prompts =
 		type: 'list',
 		message: 'What would you like to do?',
 		name: 'command',
-		choices: ['View Products for Sale', 'View Low Inventory', 'Add to Inventory' , 'Add New Product'],
-		filter: function(choice) {
-			switch(choice) {
-				case 'View Products for Sale':
-					return 'viewProd'
-					break
-				case 'View Low Inventory':
-					return 'viewInven'
-					break
-				case 'Add to Inventory':
-					return 'addInven'
-					break
-				case 'Add New Product':
-					return 'addNewProd'
-					break
-			}
-		}
+		choices: ['View Products for Sale', 'View Low Inventory', 'Add to Inventory' , 'Add New Product']
 	}
 ]
 
 inquirer.prompt(prompts).then(function(answer) {
-	console.log(answer)
+	// console.log(answer)
 	switch(answer.command) {
-		case 'viewProd':
+		case 'View Products for Sale':
 			viewProducts()
 			break
-		case 'viewInven':
+		case 'View Low Inventory':
 			viewLowInventory()
 			break
-		case 'addInven':
+		case 'Add to Inventory':
 			addInventory()
 			break
-		case 'addNewProd':
+		case 'Add New Product':
 			addNewProduct()
 			break
 	}
@@ -67,7 +51,21 @@ function viewProducts() {
 }
 
 function viewLowInventory() {
+	conn.query('SELECT itemID, productName, price, stockQuantity from products WHERE stockQuantity < 5', function(err, res) {
+		if (err) throw err;
 
+		// console.log(res)
+		if (res.length == 0) {
+			console.log('There are no products with less than 5 items left in stock currently.')
+		}
+		else {
+			console.log('================')
+			console.log('id                name                   price                   quantity in stock')
+			for (var i in res) {
+				console.log(res[i].itemID + '                 ' + res[i].productName + '              $' + res[i].price + '               ' + res[i].stockQuantity)
+			}
+		}
+	})
 }
 
 function addInventory() {
