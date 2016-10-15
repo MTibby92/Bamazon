@@ -10,6 +10,40 @@ var conn = mysql.createConnection({
 	database: 'bamazon'
 })
 
+var listofProducts = []
+conn.query('SELECT itemID, productName, price, stockQuantity FROM products', function(err, res) {
+	if (err) throw err;
+
+	for (var i in res) {
+		var obj = {
+			itemID : res[i].itemID,
+			productName: res[i].productName,
+			price: res[i].price,
+			stockQuantity: res[i].stockQuantity
+		}
+		listofProducts.push(obj)
+	}
+	console.log(listofProducts)
+
+	inquirer.prompt(prompts).then(function(answer) {
+		// console.log(answer)
+		switch(answer.command) {
+			case 'View Products for Sale':
+				viewProducts()
+				break
+			case 'View Low Inventory':
+				viewLowInventory()
+				break
+			case 'Add to Inventory':
+				addInventory()
+				break
+			case 'Add New Product':
+				addNewProduct()
+				break
+		}
+	})
+})
+
 var prompts = 
 [
 	{
@@ -19,24 +53,6 @@ var prompts =
 		choices: ['View Products for Sale', 'View Low Inventory', 'Add to Inventory' , 'Add New Product']
 	}
 ]
-
-inquirer.prompt(prompts).then(function(answer) {
-	// console.log(answer)
-	switch(answer.command) {
-		case 'View Products for Sale':
-			viewProducts()
-			break
-		case 'View Low Inventory':
-			viewLowInventory()
-			break
-		case 'Add to Inventory':
-			addInventory()
-			break
-		case 'Add New Product':
-			addNewProduct()
-			break
-	}
-})
 
 function viewProducts() {
 	conn.query('SELECT itemID, productName, price, stockQuantity FROM products', function(err, res) {
@@ -69,7 +85,39 @@ function viewLowInventory() {
 }
 
 function addInventory() {
+	var productChoices = []
+	for (var i in listofProducts) {
+		productChoices.push(listofProducts[i].productName)
+	}
 
+	var prompt2 = 
+	[
+		{
+			type: 'list',
+			message: 'Which product would you like to add inventory to?',
+			name: 'product',
+			choices: productChoices
+		},
+		{
+			type: 'input',
+			message: 'How many items would you like to add to the inventory?',
+			name: 'number',
+			filter: function(num) {
+				return parseInt(num)
+			},
+			validate: function(num) {
+				if (isNaN(parseInt(num))) {
+					return 'Please enter a numeric value'
+				} else {
+					return true
+				}
+			}
+		}
+	]
+
+	inquirer.prompt(prompt2).then(function(answer) {
+		console.log(answer)
+	})
 }
 
 function addNewProduct() {
