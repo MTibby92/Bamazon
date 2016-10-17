@@ -174,9 +174,9 @@ function addNewProduct() {
 	]
 
 	inquirer.prompt(prompt3).then(function(answer) {
-		console.log(answer)
-
-		conn.query(`INSERT INTO products (productName, departmentName, price, stockQuantity) VALUES (${answer.productName}, ${answer.departmentName}, ${answer.productPrice}, ${answer.stockQuantity});`, function(err,res) {
+		// console.log(answer)
+		
+		conn.query(`INSERT INTO products (productName, departmentName, price, stockQuantity) VALUES (${conn.escape(answer.productName)}, ${conn.escape(answer.departmentName)}, ${conn.escape(answer.productPrice)}, ${conn.escape(answer.stockQuantity)});`, function(err,res) {
 			if (err) {throw err}
 
 			console.log(`New Product added ${answer.productName}, ${answer.departmentName}, ${answer.productPrice}, ${answer.stockQuantity}`)
