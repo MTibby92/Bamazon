@@ -1,12 +1,12 @@
 var mysql = require('mysql')
 var inquirer = require('inquirer')
-var secret_key = require('./secret_key')
+var secretKey = require('./secret_key')
 
 var conn = mysql.createConnection({
 	host: 'localhost',
 	port: 3306,
 	user: 'root',
-	password: secret_key.password,
+	password: secretKey.password,
 	database: 'bamazon'
 })
 
