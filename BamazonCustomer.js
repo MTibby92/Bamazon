@@ -93,5 +93,20 @@ function placeOrder(input) {
 
 		var total = price * input.quantity
 		console.log('The total price for your order is $' + total)
+		updateSales(total, input.id)
+	})
+}
+
+function updateSales(total, item) {
+	conn.query('SELECT departmentName FROM products WHERE itemID = ' + conn.escape(item), function(err,res) {
+		if (err) {throw err}
+
+		var depName = res[0].departmentName
+
+		conn.query('UPDATE departments SET totalSales = totalSales + ' + conn.escape(total) + ' WHERE departmentName = ' + conn.escape(depName), function(err, res) {
+			if (err) {throw err}
+
+			console.log('Total Sales column updated:', depName, '+$' + total)
+		})
 	})
 }
