@@ -129,58 +129,68 @@ function addInventory() {
 }
 
 function addNewProduct() {
-	var prompt3 = 
-	[
-		{
-			type: 'input',
-			message: 'Enter the name of the product you\'d like to add',
-			name: 'productName'
-		},
-		{
-			type: 'list',
-			message: 'Enter the name of the department the product belongs in',
-			name: 'departmentName',
-			choices: ['Books & Audible', 'Movies, Music, & Games', 'Electronics & Computers', 'Home, Garden, & Tools', 'Beauty, Health, & Grocery', 'Toys, Kids, & Baby', 'Clothing, Shoes, & Jewelry', 'Handmade', 'Sports & Outdoors', 'Automotive & Industrial']
-		},
-		{
-			type: 'input',
-			message: 'Enter the price of the product',
-			name: 'productPrice',
-			filter: function(num) {
-				return parseFloat(num)
-			},
-			validate: function(num) {
-				if (isNaN(parseFloat(num))) {
-					return 'Please enter a numeric value'
-				} else {
-					return true
-				}
-			}
-		},
-		{
-			type: 'input',
-			message: 'How many items would you like to add to the inventory?',
-			name: 'stockQuantity',
-			filter: function(num) {
-				return parseInt(num)
-			},
-			validate: function(num) {
-				if (isNaN(parseInt(num))) {
-					return 'Please enter a numeric value'
-				} else {
-					return true
-				}
-			}
+	var departmentList = []
+	conn.query('SELECT departmentName FROM departments', function(err, res) {
+		if (err) {throw err}
+
+		for (var i in res) {
+			departmentList.push(res[i].departmentName)
 		}
-	]
+	
+		var prompt3 = 
+		[
+			{
+				type: 'input',
+				message: 'Enter the name of the product you\'d like to add',
+				name: 'productName'
+			},
+			{
+				type: 'list',
+				message: 'Enter the name of the department the product belongs in',
+				name: 'departmentName',
+				// choices: ['Books & Audible', 'Movies, Music, & Games', 'Electronics & Computers', 'Home, Garden, & Tools', 'Beauty, Health, & Grocery', 'Toys, Kids, & Baby', 'Clothing, Shoes, & Jewelry', 'Handmade', 'Sports & Outdoors', 'Automotive & Industrial']
+				choices: departmentList
+			},
+			{
+				type: 'input',
+				message: 'Enter the price of the product',
+				name: 'productPrice',
+				filter: function(num) {
+					return parseFloat(num)
+				},
+				validate: function(num) {
+					if (isNaN(parseFloat(num))) {
+						return 'Please enter a numeric value'
+					} else {
+						return true
+					}
+				}
+			},
+			{
+				type: 'input',
+				message: 'How many items would you like to add to the inventory?',
+				name: 'stockQuantity',
+				filter: function(num) {
+					return parseInt(num)
+				},
+				validate: function(num) {
+					if (isNaN(parseInt(num))) {
+						return 'Please enter a numeric value'
+					} else {
+						return true
+					}
+				}
+			}
+		]
 
-	inquirer.prompt(prompt3).then(function(answer) {
-		// console.log(answer)
-		
-		conn.query(`INSERT INTO products (productName, departmentName, price, stockQuantity) VALUES (${conn.escape(answer.productName)}, ${conn.escape(answer.departmentName)}, ${conn.escape(answer.productPrice)}, ${conn.escape(answer.stockQuantity)});`, function(err,res) {
-			if (err) {throw err}
+		inquirer.prompt(prompt3).then(function(answer) {
+			// console.log(answer)
+			
+			conn.query(`INSERT INTO products (productName, departmentName, price, stockQuantity) VALUES (${conn.escape(answer.productName)}, ${conn.escape(answer.departmentName)}, ${conn.escape(answer.productPrice)}, ${conn.escape(answer.stockQuantity)});`, function(err,res) {
+				if (err) {throw err}
 
-			console.log(`New Product added ${answer.productName}, ${answer.departmentName}, ${answer.productPrice}, ${answer.stockQuantity}`)
+				console.log(`New Product added ${answer.productName}, ${answer.departmentName}, ${answer.productPrice}, ${answer.stockQuantity}`)
+			})
 		})
 	})
 }
