@@ -137,9 +137,10 @@ function addNewProduct() {
 			name: 'productName'
 		},
 		{
-			type: 'input',
+			type: 'list',
 			message: 'Enter the name of the department the product belongs in',
-			name: 'departmentName'
+			name: 'departmentName',
+			choices: ['Books & Audible', 'Movies, Music, & Games', 'Electronics & Computers', 'Home, Garden, & Tools', 'Beauty, Health, & Grocery', 'Toys, Kids, & Baby', 'Clothing, Shoes, & Jewelry', 'Handmade', 'Sports & Outdoors', 'Automotive & Industrial']
 		},
 		{
 			type: 'input',
