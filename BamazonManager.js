@@ -59,11 +59,16 @@ function viewProducts() {
 	conn.query('SELECT itemID, productName, price, stockQuantity FROM products', function(err, res) {
 		if (err) {throw err}
 		// console.log(res)
-		console.log('================')
-		console.log('id                name                   price                   quantity in stock')
+
+		// instantiate 
+		var table = new Table({
+			head: ['Product ID', 'Product Name', 'Price', 'Quantity in Stock'], colWidths: [12, 15, 13, 20]
+		})
+
 		for (var i in res) {
-			console.log(res[i].itemID + '                 ' + res[i].productName + '              $' + res[i].price + '               ' + res[i].stockQuantity)
+			table.push([res[i].itemID, res[i].productName, '$' + res[i].price, res[i].stockQuantity])
 		}
+		console.log(table.toString())
 	})
 }
 
@@ -76,11 +81,15 @@ function viewLowInventory() {
 			console.log('There are no products with less than 5 items left in stock currently.')
 		}
 		else {
-			console.log('================')
-			console.log('id                name                   price                   quantity in stock')
+			// instantiate 
+			var table = new Table({
+				head: ['Product ID', 'Product Name', 'Price', 'Quantity in Stock'], colWidths: [12, 15, 13, 20]
+			})
+
 			for (var i in res) {
-				console.log(res[i].itemID + '                 ' + res[i].productName + '              $' + res[i].price + '               ' + res[i].stockQuantity)
+				table.push([res[i].itemID, res[i].productName, '$' + res[i].price, res[i].stockQuantity])
 			}
+			console.log(table.toString())
 		}
 	})
 }
@@ -117,7 +126,7 @@ function addInventory() {
 	]
 
 	inquirer.prompt(prompt2).then(function(answer) {
-		console.log(answer)
+		// console.log(answer)
 		// console.log(answer.product.split(' '))
 		var id = answer.product.split(' ')
 		// console.log(id[0])
