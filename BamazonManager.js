@@ -1,6 +1,7 @@
 var mysql = require('mysql')
 var inquirer = require('inquirer')
 var secretKey = require('./secret_key')
+var Table = require('cli-table')
 
 var conn = mysql.createConnection({
 	host: 'localhost',

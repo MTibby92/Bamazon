@@ -1,12 +1,13 @@
 var mysql = require('mysql')
 var inquirer = require('inquirer')
-var secret_key = require('./secret_key')
+var secretKey = require('./secret_key')
+var Table = require('cli-table')
 
 var conn = mysql.createConnection({
 	host: 'localhost',
 	port: 3306,
 	user: 'root',
-	password: secret_key.password,
+	password: secretKey.password,
 	database: 'bamazon'
 })
 
@@ -64,10 +65,13 @@ var prompts =
 
 
 function displayItems(res) {
-	console.log('================')
-	console.log('id                name                   price')
+	// instantiate 
+	var table = new Table({
+		head: ['Product ID', 'Product Name', 'Price'], colWidths: [15, 15, 15]
+	})
+
 	for (var i in res) {
-		console.log(res[i].itemID + '                 ' + res[i].productName + '              $' + res[i].price)
+		table.push([res[i].itemID, res[i].productName, '$' + res[i].price])
 		var obj = {
 			itemID : res[i].itemID,
 			productName: res[i].productName,
@@ -76,7 +80,8 @@ function displayItems(res) {
 		}
 		listofProducts.push(obj)
 	}
-	console.log(listofProducts)
+	console.log(table.toString())
+	// console.log(listofProducts)
 }
 
 

@@ -1,6 +1,7 @@
 var mysql = require('mysql')
 var inquirer = require('inquirer')
 var secretKey = require('./secret_key')
+var Table = require('cli-table')
 
 var conn = mysql.createConnection({
 	host: 'localhost',
@@ -9,6 +10,26 @@ var conn = mysql.createConnection({
 	password: secretKey.password,
 	database: 'bamazon'
 })
+
+function viewSales() {
+	conn.query('SELECT departmentID, departmentName, overHeadCosts, totalSales FROM departments;', function(err, res) {
+		if (err) {throw err}
+
+		// instantiate 
+		var table = new Table({
+			head: ['Department ID', 'Department Name', 'Overhead Costs', 'Total Sales', 'Total Profit'], colWidths: [15, 27, 16, 13, 14]
+		})
+
+		for (var i in res) {
+			table.push([res[i].departmentID, res[i].departmentName, res[i].overHeadCosts, res[i].totalSales, (parseFloat(res[i].totalSales)) - parseFloat(res[i].overHeadCosts)])
+		}
+		console.log(table.toString())
+	})
+}
+
+function createDepartment() {
+
+}
 
 var prompt1 = 
 [
