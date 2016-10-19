@@ -28,7 +28,52 @@ function viewSales() {
 }
 
 function createDepartment() {
+	var prompt2 = 
+	[
+		{
+			type: 'input',
+			message: 'What is the name of the department?',
+			name: 'departmentName'
+		},
+		{
+			type: 'input',
+			message: 'What is the Overhead Cost for this department?',
+			name: 'overHead',
+			filter: function(num) {
+				return parseFloat(num)
+			},
+			validate: function(num) {
+				if (isNaN(parseFloat(num))) {
+					return 'Please enter a numeric value'
+				} else {
+					return true
+				}
+			}
+		},
+		{
+			type: 'input',
+			message: 'What is the Total Sales for this department?',
+			name: 'totalSales',
+			filter: function(num) {
+				return parseFloat(num)
+			},
+			validate: function(num) {
+				if (isNaN(parseFloat(num))) {
+					return 'Please enter a numeric value'
+				} else {
+					return true
+				}
+			}
+		}
+	]
 
+	inquirer.prompt(prompt2).then(function(answer) {
+		conn.query(`INSERT INTO departments (departmentName, overHeadCosts, totalSales) VALUES (${conn.escape(answer.departmentName)}, ${conn.escape(answer.overHead)}, ${conn.escape(answer.totalSales)});`, function(err, res) {
+			if (err) {throw err}
+
+			console.log(`New Department added: ${conn.escape(answer.departmentName)}, $${conn.escape(answer.overHead)}, $${conn.escape(answer.totalSales)}`)
+		})
+	})
 }
 
 var prompt1 = 

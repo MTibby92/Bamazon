@@ -24,7 +24,7 @@ conn.query('SELECT itemID, productName, price, stockQuantity FROM products', fun
 		}
 		listofProducts.push(obj)
 	}
-	console.log(listofProducts)
+	// console.log(listofProducts)
 
 	inquirer.prompt(prompts).then(function(answer) {
 		// console.log(answer)
