@@ -11,6 +11,7 @@ var conn = mysql.createConnection({
 	database: 'bamazon'
 })
 
+// before any user input, database is queried and up-to-date data is stored in the global array of objects listofProducts
 var listofProducts = []
 conn.query('SELECT itemID, productName, price, stockQuantity FROM products', function(err, res) {
 	if (err) {throw err}
@@ -24,10 +25,9 @@ conn.query('SELECT itemID, productName, price, stockQuantity FROM products', fun
 		}
 		listofProducts.push(obj)
 	}
-	// console.log(listofProducts)
 
+	// inital prompts for user regarding what function they'd like to run
 	inquirer.prompt(prompts).then(function(answer) {
-		// console.log(answer)
 		switch(answer.command) {
 			case 'View Products for Sale':
 				viewProducts()
@@ -55,12 +55,12 @@ var prompts =
 	}
 ]
 
+// displays table of currently available products, including the number in stock
 function viewProducts() {
 	conn.query('SELECT itemID, productName, price, stockQuantity FROM products', function(err, res) {
 		if (err) {throw err}
-		// console.log(res)
 
-		// instantiate 
+		// instantiate Table
 		var table = new Table({
 			head: ['Product ID', 'Product Name', 'Price', 'Quantity in Stock'], colWidths: [12, 15, 13, 20]
 		})
@@ -72,16 +72,16 @@ function viewProducts() {
 	})
 }
 
+// selects and displays items that have less than 5 items in stock; other wise returns a statement saying there's nothing like that
 function viewLowInventory() {
 	conn.query('SELECT itemID, productName, price, stockQuantity from products WHERE stockQuantity < 5', function(err, res) {
 		if (err) {throw err}
 
-		// console.log(res)
+		// checks condition where there's no products less than 5 in stock
 		if (res.length == 0) {
 			console.log('There are no products with less than 5 items left in stock currently.')
-		}
-		else {
-			// instantiate 
+		} else {
+			// instantiate Table
 			var table = new Table({
 				head: ['Product ID', 'Product Name', 'Price', 'Quantity in Stock'], colWidths: [12, 15, 13, 20]
 			})
@@ -94,6 +94,7 @@ function viewLowInventory() {
 	})
 }
 
+// increases the stock of a selected product
 function addInventory() {
 	var productChoices = []
 	for (var i in listofProducts) {
@@ -112,6 +113,7 @@ function addInventory() {
 			type: 'input',
 			message: 'How many items would you like to add to the inventory?',
 			name: 'number',
+			// checks if the input value is an int, reprompts otherwise
 			filter: function(num) {
 				return parseInt(num)
 			},
@@ -126,10 +128,9 @@ function addInventory() {
 	]
 
 	inquirer.prompt(prompt2).then(function(answer) {
-		// console.log(answer)
-		// console.log(answer.product.split(' '))
+		// splits the id from the product name; initially combined for display purposes
 		var id = answer.product.split(' ')
-		// console.log(id[0])
+
 		conn.query(`UPDATE products SET stockQuantity = stockQuantity + ${answer.number} WHERE itemID = ${parseInt(id[0])};`, function(err,res) {
 			if (err) {throw err}
 
@@ -138,7 +139,9 @@ function addInventory() {
 	})
 }
 
+// function for adding new product to table, requires all fields except id
 function addNewProduct() {
+	// pulls in the current list of available departments to add a product to
 	var departmentList = []
 	conn.query('SELECT departmentName FROM departments', function(err, res) {
 		if (err) {throw err}
@@ -158,7 +161,7 @@ function addNewProduct() {
 				type: 'list',
 				message: 'Enter the name of the department the product belongs in',
 				name: 'departmentName',
-				// choices: ['Books & Audible', 'Movies, Music, & Games', 'Electronics & Computers', 'Home, Garden, & Tools', 'Beauty, Health, & Grocery', 'Toys, Kids, & Baby', 'Clothing, Shoes, & Jewelry', 'Handmade', 'Sports & Outdoors', 'Automotive & Industrial']
+				// choices are updated based on what's in the database
 				choices: departmentList
 			},
 			{
