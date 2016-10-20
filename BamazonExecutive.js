@@ -11,15 +11,17 @@ var conn = mysql.createConnection({
 	database: 'bamazon'
 })
 
+// query for viewing the sales and profits for all departments
 function viewSales() {
 	conn.query('SELECT departmentID, departmentName, overHeadCosts, totalSales FROM departments;', function(err, res) {
 		if (err) {throw err}
 
-		// instantiate 
+		// instantiate Table
 		var table = new Table({
 			head: ['Department ID', 'Department Name', 'Overhead Costs', 'Total Sales', 'Total Profit'], colWidths: [15, 27, 16, 13, 14]
 		})
 
+		// populates rows of table with data from the query
 		for (var i in res) {
 			table.push([res[i].departmentID, res[i].departmentName, res[i].overHeadCosts, res[i].totalSales, (parseFloat(res[i].totalSales)) - parseFloat(res[i].overHeadCosts)])
 		}
@@ -27,6 +29,7 @@ function viewSales() {
 	})
 }
 
+// adds new department to department table, selectable for the manager to add products to in the manager.js file
 function createDepartment() {
 	var prompt2 = 
 	[
@@ -39,6 +42,7 @@ function createDepartment() {
 			type: 'input',
 			message: 'What is the Overhead Cost for this department?',
 			name: 'overHead',
+			// checks and enforces decimal or integer values
 			filter: function(num) {
 				return parseFloat(num)
 			},
@@ -54,6 +58,7 @@ function createDepartment() {
 			type: 'input',
 			message: 'What is the Total Sales for this department?',
 			name: 'totalSales',
+			// checks and enforces decimal or integer values
 			filter: function(num) {
 				return parseFloat(num)
 			},
@@ -91,6 +96,7 @@ var departmentList = []
 conn.query('SELECT departmentName FROM departments', function(err, res) {
 	if (err) {throw err}
 
+	// updates list of currently available departments before user is prompted
 	for (var i in res) {
 		departmentList.push(res[i].departmentName)
 	}
